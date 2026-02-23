@@ -1,0 +1,2455 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>🧠 Homelab Knowledge Base & Cheatsheets</title>
+  <style>
+    /* Modern CSS Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Design System */
+    :root {
+      /* Dark theme (default) */
+      --bg-primary: #0a0c10;
+      --bg-secondary: #11161e;
+      --bg-tertiary: #1a212c;
+      --bg-card: rgba(26, 33, 44, 0.7);
+      --bg-gradient: radial-gradient(circle at 20% 0%, #1e2a3a, #0a0c10 70%);
+      
+      --text-primary: #e2e9f0;
+      --text-secondary: #9aaec5;
+      --text-muted: #6a7f9b;
+      
+      --accent-primary: #ff8a3d;
+      --accent-secondary: #7aa2ff;
+      --accent-success: #4ade80;
+      --accent-warning: #fbbf24;
+      --accent-danger: #fb7185;
+      --accent-info: #38bdf8;
+      
+      --border-light: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.12);
+      
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 20px rgba(255, 138, 61, 0.2);
+      
+      --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Light theme */
+    .light-theme {
+      --bg-primary: #f0f4f8;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #e6edf5;
+      --bg-card: rgba(255, 255, 255, 0.8);
+      --bg-gradient: radial-gradient(circle at 20% 0%, #d9e2ef, #f0f4f8 70%);
+      
+      --text-primary: #1a2634;
+      --text-secondary: #2f3e57;
+      --text-muted: #5d6f88;
+      
+      --border-light: rgba(0, 0, 0, 0.08);
+      --border-medium: rgba(0, 0, 0, 0.12);
+      
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+      --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      transition: var(--transition);
+    }
+
+    /* Main layout */
+    .app {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      min-height: 100vh;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border-right: 1px solid var(--border-light);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 20px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .brand h1 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .brand .sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Search */
+    .search {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 14px 14px 14px 44px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .search input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(255, 138, 61, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 18px;
+    }
+
+    /* Tabs */
+    .tabs {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent-primary) var(--bg-tertiary);
+    }
+
+    .tabs::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .tabs::-webkit-scrollbar-track {
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-sm);
+    }
+
+    .tabs::-webkit-scrollbar-thumb {
+      background: var(--accent-primary);
+      border-radius: var(--radius-sm);
+    }
+
+    .group-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 16px 8px 8px;
+    }
+
+    .tab {
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 6px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-lg);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: var(--transition);
+      font-size: 13px;
+    }
+
+    .tab:hover {
+      background: rgba(122, 162, 255, 0.08);
+      border-color: rgba(122, 162, 255, 0.2);
+      transform: translateX(4px);
+    }
+
+    .tab.active {
+      background: linear-gradient(90deg, rgba(255, 138, 61, 0.15), transparent);
+      border-color: rgba(255, 138, 61, 0.3);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-name {
+      font-weight: 500;
+    }
+
+    .tab-tag {
+      font-size: 10px;
+      padding: 4px 8px;
+      background: var(--bg-tertiary);
+      border-radius: 20px;
+      color: var(--text-muted);
+      border: 1px solid var(--border-light);
+    }
+
+    /* Main content */
+    .main {
+      height: 100vh;
+      overflow-y: auto;
+      padding: 24px;
+      scrollbar-width: thin;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 16px 0;
+      background: linear-gradient(180deg, var(--bg-primary) 0%, transparent 100%);
+      backdrop-filter: blur(8px);
+    }
+
+    .title h2 {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .title .hint {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .btn:hover {
+      border-color: var(--accent-primary);
+      background: rgba(255, 138, 61, 0.1);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent-primary), #ff6b1a);
+      border: none;
+      color: white;
+    }
+
+    .btn.primary:hover {
+      background: linear-gradient(135deg, #ff9f5c, var(--accent-primary));
+      box-shadow: 0 0 20px rgba(255, 138, 61, 0.4);
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 4px 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      color: var(--text-secondary);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .chip {
+      padding: 6px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chip::before {
+      content: "#";
+      color: var(--accent-primary);
+      opacity: 0.7;
+    }
+
+    /* Inputs */
+    .inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .input-group input,
+    .input-group textarea {
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      transition: var(--transition);
+    }
+
+    .input-group input:focus,
+    .input-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(255, 138, 61, 0.1);
+    }
+
+    .input-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    /* Command blocks */
+    .command-block {
+      margin: 16px 0;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      transition: var(--transition);
+    }
+
+    .command-block:hover {
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .command-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .command-header .desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .command-content {
+      position: relative;
+    }
+
+    .command-content pre {
+      margin: 0;
+      padding: 16px;
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 6px 12px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      backdrop-filter: blur(4px);
+      transition: var(--transition);
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 138, 61, 0.3);
+      color: white;
+    }
+
+    /* Status messages */
+    .message {
+      padding: 16px;
+      border-radius: var(--radius-lg);
+      margin: 16px 0;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .message.warning {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      color: #fbbf24;
+    }
+
+    .message.success {
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      color: #4ade80;
+    }
+
+    .message.error {
+      background: rgba(251, 113, 133, 0.1);
+      border: 1px solid rgba(251, 113, 133, 0.3);
+      color: #fb7185;
+    }
+
+    .message.info {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+    }
+
+    /* KB Playbook */
+    .kb-entry {
+      margin: 20px 0;
+      padding: 20px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-lg);
+      border-left: 4px solid var(--accent-info);
+    }
+
+    .kb-symptom {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .kb-section {
+      margin: 12px 0;
+    }
+
+    .kb-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .kb-items {
+      list-style: none;
+      padding: 0;
+    }
+
+    .kb-items li {
+      font-size: 13px;
+      padding: 4px 0 4px 20px;
+      position: relative;
+      color: var(--text-secondary);
+    }
+
+    .kb-items li::before {
+      content: "•";
+      color: var(--accent-primary);
+      position: absolute;
+      left: 0;
+    }
+
+    /* Tool outputs */
+    .tool-output {
+      margin: 20px 0;
+      padding: 20px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+    }
+
+    .tool-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      margin: 12px 0;
+    }
+
+    .stat {
+      padding: 8px 16px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-md);
+      font-size: 12px;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 24px;
+      padding: 20px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+    }
+
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .footer-content p {
+      color: var(--text-secondary);
+      font-size: 12px;
+      line-height: 1.6;
+      margin: 8px 0;
+    }
+
+    .license {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-light);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .app {
+        grid-template-columns: 280px 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        height: auto;
+        position: relative;
+      }
+      
+      .main {
+        height: auto;
+      }
+      
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .actions {
+        width: 100%;
+      }
+      
+      .btn {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border-light);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Toast notifications */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 24px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      color: var(--text-primary);
+      font-size: 13px;
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">🧠</div>
+        <div>
+          <h1>Homelab KB</h1>
+          <div class="sub">self-hosted • offline • copy/paste</div>
+        </div>
+      </div>
+
+      <div class="search">
+        <span class="search-icon">🔍</span>
+        <input id="search" type="text" placeholder="Search commands, tools, runbooks..." />
+      </div>
+
+      <div id="tabs" class="tabs"></div>
+
+      <div class="footer" style="margin-top: auto; background: transparent; padding: 16px 0;">
+        <div style="font-size: 11px; color: var(--text-muted); text-align: center;">
+          <span>⚡ Network-dependent sections require input</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h2 id="pageTitle">—</h2>
+          <div class="hint" id="pageHint">—</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="themeToggle" title="Toggle theme">🌓</button>
+          <button class="btn primary" id="copyAllBtn">
+            <span>📋</span>
+            <span>Copy all</span>
+          </button>
+          <button class="btn" id="runbookBtn">
+            <span>📚</span>
+            <span>Runbook</span>
+            <span class="pill" id="runbookPill">on</span>
+          </button>
+          <button class="btn" id="expandBtn">
+            <span>🔲</span>
+            <span>Per-block</span>
+            <span class="pill" id="expandPill">off</span>
+          </button>
+          <button class="btn" id="resetBtn">
+            <span>🔄</span>
+            <span>Reset</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div id="metaChips" class="meta"></div>
+
+        <div id="inputs" class="inputs" style="display:none;"></div>
+        <div id="gate" class="message warning" style="display:none;"></div>
+        <div id="tools" style="display:none;"></div>
+
+        <div class="section">
+          <h3 style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary);">📋 Cheatsheet</h3>
+          <div id="content" class="command-list"></div>
+        </div>
+
+        <div class="section" id="kbSection" style="display:none;">
+          <h3 style="margin: 24px 0 16px; font-size: 14px; color: var(--text-secondary);">📚 KB Playbook</h3>
+          <div id="kb"></div>
+        </div>
+
+        <div id="note" class="message info" style="display:none;"></div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div class="footer-content">
+          <p>⚠️ <strong>Disclaimer:</strong> All commands executed at your own risk. Always validate in a test environment first. No liability for data loss, security exposure, or misconfiguration.</p>
+          <div class="license">
+            <p>© 2026 @ehcp.dev — Released under <strong>GNU General Public License (GPL)</strong></p>
+            <p style="margin-top: 8px;">Free to use, modify, and share. Improvements must be shared back. We learn from chaos.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Utility functions
+    const $ = (id) => document.getElementById(id);
+    const showToast = (message, type = 'info') => {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    };
+
+    // HTML escape
+    function escapeHtml(s) {
+      return (s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Template replacement
+    function applyTemplate(str, values) {
+      return (str ?? '').replace(/\{\{(\w+)\}\}/g, (_, k) => values[k] ?? `{{${k}}}`);
+    }
+
+    // Copy to clipboard
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+    }
+
+    // IP utilities
+    function ipv4ToInt(ip) {
+      const parts = ip.split('.');
+      if (parts.length !== 4) return null;
+      let n = 0;
+      for (let i = 0; i < 4; i++) {
+        const p = parseInt(parts[i], 10);
+        if (isNaN(p) || p < 0 || p > 255) return null;
+        n = (n << 8) + p;
+      }
+      return n >>> 0;
+    }
+
+    function intToIpv4(n) {
+      return [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.');
+    }
+
+    function parseCidr(cidr) {
+      const m = cidr.match(/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\/(\d{1,2})$/);
+      if (!m) return null;
+      const ip = m[1];
+      const prefix = parseInt(m[2], 10);
+      if (prefix < 0 || prefix > 32) return null;
+      const ipInt = ipv4ToInt(ip);
+      if (ipInt === null) return null;
+      const mask = prefix === 0 ? 0 : (0xFFFFFFFF << (32 - prefix)) >>> 0;
+      const net = (ipInt & mask) >>> 0;
+      const bcast = (net | (~mask >>> 0)) >>> 0;
+      const hosts = prefix >= 31 ? 0 : Math.max(0, (bcast - net - 1));
+      const first = prefix >= 31 ? null : (net + 1) >>> 0;
+      const last = prefix >= 31 ? null : (bcast - 1) >>> 0;
+      return { ip, prefix, mask, net, bcast, hosts, first, last };
+    }
+
+    function sortIpv4List(text) {
+      const lines = text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+      const parsed = lines.map(l => ({ raw: l, n: ipv4ToInt(l) }));
+      const valid = parsed.filter(x => x.n !== null).sort((a, b) => a.n - b.n);
+      const invalid = parsed.filter(x => x.n === null).map(x => x.raw);
+      return { valid: valid.map(x => x.raw), invalid };
+    }
+
+    // Complete DATA array with all tabs
+    const DATA = [
+      // ===== Tools
+      {
+        group: "Tools",
+        id: "subnet",
+        name: "Subnet calculator",
+        tag: "offline tool",
+        hint: "CIDR → network, broadcast, usable range, host count.",
+        chips: ["cidr", "ipv4", "offline"],
+        inputs: [{ key: "cidr", label: "CIDR", placeholder: "e.g. 192.168.1.0/24" }],
+        tools: { kind: "subnet" },
+        note: "No data leaves your browser.",
+        blocks: []
+      },
+      {
+        group: "Tools",
+        id: "ipsort",
+        name: "IP sort helper",
+        tag: "offline tool",
+        hint: "Paste IPs → sorted list + invalid lines.",
+        chips: ["inventory", "sort", "ipv4"],
+        inputs: [{ key: "ip_list", label: "Paste IPv4 list (one per line)", placeholder: "e.g.\n192.168.1.10\n192.168.1.2\n10.0.0.5" }],
+        tools: { kind: "ipsort" },
+        note: "Useful for device inventories.",
+        blocks: []
+      },
+      {
+        group: "Tools",
+        id: "tlscmd",
+        name: "TLS command builder",
+        tag: "offline tool",
+        hint: "Generate openssl/curl commands (SNI-aware).",
+        chips: ["openssl", "sni", "chain"],
+        inputs: [
+          { key: "host", label: "Hostname (SNI)", placeholder: "e.g. mail.example.com" },
+          { key: "port", label: "Port", placeholder: "e.g. 443" }
+        ],
+        tools: { kind: "tlscmd" },
+        note: "Use when browsers show trust or hostname errors.",
+        blocks: []
+      },
+      {
+        group: "Tools",
+        id: "nginxfind",
+        name: "Nginx vhost finder",
+        tag: "offline tool",
+        hint: "Generate commands to locate the matching server block.",
+        chips: ["nginx -T", "server_name", "host header"],
+        inputs: [
+          { key: "target", label: "Target host/IP", placeholder: "e.g. 192.168.1.50 or app.example.com" },
+          { key: "host_header", label: "Host header (optional)", placeholder: "e.g. app.example.com" }
+        ],
+        tools: { kind: "nginxfind" },
+        note: "Use when you see unexpected 404/502.",
+        blocks: []
+      },
+
+      // ===== Core triage / truth tests
+      {
+        group: "Runbooks",
+        id: "truth",
+        name: "DNS + HTTP truth tests",
+        tag: "separate layers",
+        hint: "Minimal tests that separate: host/service/routing/DNS/proxy/TLS.",
+        chips: ["curl", "dig", "ss", "resolve"],
+        requires: ["target"],
+        inputs: [
+          { key: "target", label: "Target IP/host (required)", placeholder: "e.g. 192.168.1.50 or app.example.com" },
+          { key: "host_header", label: "Host header (optional)", placeholder: "e.g. app.example.com" },
+          { key: "dns_server", label: "DNS server (optional)", placeholder: "e.g. 192.168.1.2" }
+        ],
+        blocks: [
+          { title: "Routing vs DNS", items: [
+            { cmd: "ping -c 3 1.1.1.1", desc: "If fails: routing/firewall (not DNS)." },
+            { cmd: "dig +short A example.com", desc: "If fails but ping works: DNS issue." },
+            { cmd: "dig @{{dns_server}} +short A example.com", desc: "If DNS server provided: query it directly." },
+          ]},
+          { title: "Service listening (on server)", items: [
+            { cmd: "ss -tulpn | egrep ':80\\b|:443\\b|:8080\\b|:8443\\b' || true", desc: "Confirm expected ports are listening." },
+          ]},
+          { title: "HTTP vhost truth", items: [
+            { cmd: "curl -i http://{{target}}/ | head -n 25", desc: "IP/host direct response." },
+            { cmd: "curl -i -H 'Host: {{host_header}}' http://{{target}}/ | head -n 30", desc: "Force vhost match (if Host header provided)." },
+          ]},
+          { title: "TLS/SNI truth", items: [
+            { cmd: "curl -kI https://{{target}}/ | head -n 25", desc: "Quick TLS reachability check (may still fail hostname validation)." },
+            { cmd: "# SNI precise (replace host+ip)\n# curl -kI --resolve example.com:443:IP https://example.com/ | head -n 30", desc: "For HTTPS vhost matching without changing DNS." }
+          ]}
+        ],
+        kb: [{
+          symptom: "Everything feels broken; you need a first cut fast.",
+          likely_causes: ["Mixing multiple layers (DNS/proxy/TLS) at once", "Wrong vhost matched (Host header)", "Service not listening on expected port"],
+          checks: ["Ping public IP vs name resolution", "Direct IP:port vs proxied hostname", "Confirm listener with ss -tulpn"],
+          fixes: ["Fix the lowest failing layer first (routing → DNS → service → proxy → TLS)"],
+          cautions: ["Avoid changing multiple configs before you’ve isolated the failing layer."]
+        }],
+        note: "If you only run one tab first, run this one."
+      },
+
+      // ===== External vs internal reachability
+      {
+        group: "Runbooks",
+        id: "reach",
+        name: "External vs internal reachability",
+        tag: "LAN vs WAN",
+        hint: "When it works on LAN but fails from outside (or vice versa).",
+        chips: ["hairpin", "split dns", "ipv6"],
+        requires: ["fqdn"],
+        inputs: [
+          { key: "fqdn", label: "Public hostname (required)", placeholder: "e.g. app.example.com" },
+          { key: "public_ip", label: "Public IP (optional)", placeholder: "e.g. 203.0.113.10" }
+        ],
+        blocks: [
+          { title: "Common culprits", items: [
+            { cmd: "Split DNS: inside resolves to LAN IP; outside resolves to public IP.", desc: "Fix DNS views or internal overrides." },
+            { cmd: "Hairpin NAT: LAN clients hitting public IP may fail if router doesn’t hairpin.", desc: "Use split DNS or enable hairpin NAT." },
+            { cmd: "IPv6 AAAA record: clients may use IPv6 path you didn’t configure.", desc: "Remove wrong AAAA or ensure IPv6 forwarding + certs." },
+          ]},
+          { title: "What to test (from an external network)", items: [
+            { cmd: "dig +short A {{fqdn}}", desc: "Confirm public A record points where you expect." },
+            { cmd: "dig +short AAAA {{fqdn}}", desc: "Confirm IPv6 record is correct or absent." },
+            { cmd: "curl -I http://{{fqdn}}/ | head -n 25", desc: "Port 80 reachability." },
+            { cmd: "curl -Ik https://{{fqdn}}/ | head -n 25", desc: "Port 443 reachability (TLS may fail if cert wrong)." },
+          ]},
+          { title: "If you have public IP", items: [
+            { cmd: "curl -I http://{{public_ip}}/ | head -n 20", desc: "Direct to public IP (may hit default vhost)." },
+          ]}
+        ],
+        kb: [{
+          symptom: "Works on LAN; outside fails (or the opposite).",
+          likely_causes: ["DNS split/hairpin issues", "Port forward missing or wrong target", "AAAA points elsewhere", "Firewall blocks WAN but LAN works"],
+          checks: ["Test from an external network", "Confirm router NAT/port forwards", "Check firewall WAN rules/logs"],
+          fixes: ["Use split DNS, fix port forwards, remove wrong AAAA, open only required ports"],
+          cautions: ["Never expose admin panels on WAN without access control."]
+        }],
+        note: "Prefer split DNS over hairpin dependency."
+      },
+
+      // ===== Cheatsheets
+      {
+        group: "Cheatsheets",
+        id: "ssh",
+        name: "SSH",
+        tag: "remote access",
+        hint: "Secure remote shell, tunneling, file copy.",
+        chips: ["ssh", "scp", "rsync", "tunnel"],
+        blocks: [
+          { cmd: "ssh user@host", desc: "Basic login." },
+          { cmd: "ssh -p 2222 user@host", desc: "Custom port." },
+          { cmd: "ssh -i ~/.ssh/id_ed25519 user@host", desc: "Specify key file." },
+          { cmd: "ssh -L 8080:127.0.0.1:8080 user@host", desc: "Local forward." },
+          { cmd: "ssh -R 2222:127.0.0.1:22 user@host", desc: "Reverse forward." },
+          { cmd: "ssh -D 1080 user@host", desc: "SOCKS proxy." },
+          { cmd: "scp file.txt user@host:/tmp/", desc: "Copy file to remote." },
+          { cmd: "rsync -avh --progress ./dir/ user@host:/srv/dir/", desc: "Fast sync." },
+          { cmd: "ssh-keygen -t ed25519 -C \"homelab\"", desc: "Generate keypair." },
+          { cmd: "ssh-copy-id user@host", desc: "Install public key." },
+        ],
+        kb: [{
+          symptom: "SSH connects then immediately closes.",
+          likely_causes: ["Forced command/shell issue", "Firewall/ban after auth", "Disk full / resource exhaustion"],
+          checks: ["Server logs (journalctl/auth logs)", "Client: ssh -vvv user@host", "Server: ss -tulpn | grep :22"],
+          fixes: ["Fix user shell/forced command", "Temporarily unban/allow your IP", "Free disk space; restart sshd if needed"],
+          cautions: ["Avoid disabling security controls permanently."]
+        }],
+        note: "Prefer keys; disable password auth when ready."
+      },
+      {
+        group: "Cheatsheets",
+        id: "vi",
+        name: "vi / vim",
+        tag: "editing",
+        hint: "Fast file edits on servers.",
+        chips: ["vim", "search", "replace"],
+        blocks: [
+          { cmd: "vi /etc/nginx/nginx.conf", desc: "Open file." },
+          { cmd: "i ; Esc", desc: "Insert mode; return to normal mode." },
+          { cmd: ":w / :q / :wq / :q!", desc: "Save / quit / save+quit / quit no save." },
+          { cmd: "/pattern ; n/N", desc: "Search; next/prev." },
+          { cmd: ":%s/old/new/gc", desc: "Replace all with confirmation." },
+          { cmd: ":set nu", desc: "Line numbers." }
+        ],
+        kb: [],
+        note: "Core: <Esc>, :wq, /search."
+      },
+      {
+        group: "Cheatsheets",
+        id: "bash",
+        name: "Bash / Linux",
+        tag: "shell ops",
+        hint: "Files, processes, logs, sockets, routes.",
+        chips: ["grep", "journalctl", "ss", "ip"],
+        blocks: [
+          { title: "Files & search", items: [
+            { cmd: "ls -lah", desc: "List with sizes/hidden." },
+            { cmd: "du -h --max-depth=1 /var | sort -h", desc: "Find big directories." },
+            { cmd: "grep -R \"pattern\" -n /etc 2>/dev/null | head", desc: "Recursive search." },
+          ]},
+          { title: "Services & logs", items: [
+            { cmd: "systemctl status <unit> --no-pager", desc: "Status." },
+            { cmd: "journalctl -u <unit> -n 200 --no-pager", desc: "Recent logs." },
+            { cmd: "journalctl -xe --no-pager | tail -n 80", desc: "Recent system errors." },
+          ]},
+          { title: "Network", items: [
+            { cmd: "ip a; ip r", desc: "Interfaces + routes." },
+            { cmd: "ss -tulpn", desc: "Listening ports." },
+            { cmd: "curl -I http://HOST_OR_IP", desc: "HTTP header test." },
+            { cmd: "dig +short A example.com", desc: "DNS resolution." },
+          ]},
+        ],
+        kb: [],
+        note: "Most issues: logs + listening ports + routing + DNS."
+      },
+      {
+        group: "Cheatsheets",
+        id: "nmap",
+        name: "nmap",
+        tag: "network scan",
+        hint: "Discovery + port scan. Requires subnet/target.",
+        chips: ["discovery", "ports", "service detect"],
+        requires: ["subnet_or_host"],
+        inputs: [{ key: "subnet_or_host", label: "Subnet or host (required)", placeholder: "e.g. 192.168.1.0/24 or 192.168.1.10" }],
+        blocks: [
+          { title: "Light discovery", items: [
+            { cmd: "nmap -sn {{subnet_or_host}}", desc: "Host discovery only." },
+            { cmd: "nmap -sn --reason {{subnet_or_host}}", desc: "Show why host is up/down." },
+          ]},
+          { title: "Targeted ports", items: [
+            { cmd: "nmap -sS -T3 -p 22,80,443,8080,8443 {{subnet_or_host}}", desc: "Common web/admin ports." },
+            { cmd: "nmap -sS -T3 -p 1-1000 {{subnet_or_host}}", desc: "Common ports range." },
+            { cmd: "nmap -sV --version-light {{subnet_or_host}}", desc: "Light service detection." },
+          ]},
+          { title: "Output", items: [
+            { cmd: "nmap -sS -T3 -p- {{subnet_or_host}} -oN scan.txt", desc: "All TCP ports to file." },
+          ]},
+          { text: "If scans show 'filtered' across VLANs: verify routing + firewall + return path.", kind:"warn" }
+        ],
+        kb: [{
+          symptom: "All ports filtered/timeouts during scan.",
+          likely_causes: ["Firewall drop", "No L3 route between VLANs", "Asymmetric routing"],
+          checks: ["Ping/traceroute first", "Confirm allow rules and return path", "tcpdump on target interface"],
+          fixes: ["Add temporary allow rule for test ports", "Fix routing/static routes", "Avoid accidental NAT between internal VLANs"],
+          cautions: ["Avoid aggressive scans on production."]
+        }],
+        note: "Start light; prefer targeted scans."
+      },
+      {
+        group: "Cheatsheets",
+        id: "capture",
+        name: "Wireshark / tcpdump",
+        tag: "packet capture",
+        hint: "Capture on server; analyze locally.",
+        chips: ["pcap", "tcpdump", "filters"],
+        blocks: [
+          { title: "tcpdump capture", items: [
+            { cmd: "sudo tcpdump -i any -nn -s0 -w capture.pcap", desc: "Capture all interfaces." },
+            { cmd: "sudo tcpdump -i eth0 -nn host X.X.X.X -w host.pcap", desc: "Only traffic to/from host." },
+            { cmd: "sudo tcpdump -i eth0 -nn port 53 -w dns.pcap", desc: "DNS capture." },
+          ]},
+          { title: "Wireshark filters", items: [
+            { cmd: "ip.addr == X.X.X.X", desc: "Traffic involving host." },
+            { cmd: "tcp.port == 443", desc: "HTTPS." },
+            { cmd: "dns", desc: "DNS." },
+          ]},
+        ],
+        kb: [{
+          symptom: "Service works directly but fails via reverse proxy.",
+          likely_causes: ["Wrong Host header/vhost", "Proxy blocked to upstream", "TLS/SNI mismatch"],
+          checks: ["tcpdump on upstream for proxy IP", "Compare direct curl vs proxied curl", "Verify scheme (http/https)"],
+          fixes: ["Fix vhost/default_server handling", "Allow proxy → upstream ports", "Align TLS (SNI, cert, scheme)"],
+          cautions: ["Capture minimal and delete pcaps after use."]
+        }],
+        note: "Capture small and targeted."
+      },
+
+      // ===== Service discovery
+      {
+        group: "Cheatsheets",
+        id: "discover",
+        name: "Service discovery",
+        tag: "find ports + owners",
+        hint: "When you don’t know what port something runs on (or what owns the port).",
+        chips: ["ss", "lsof", "systemctl", "docker"],
+        requires: ["host_or_local"],
+        inputs: [
+          { key: "host_or_local", label: "Host/IP or 'local' (required)", placeholder: "e.g. local or 192.168.1.50" }
+        ],
+        blocks: [
+          { title: "On the server (best)", items: [
+            { cmd: "ss -tulpn", desc: "Show listeners + process." },
+            { cmd: "sudo lsof -i -P -n | head -n 60", desc: "Who owns ports (if lsof installed)." },
+            { cmd: "systemctl --type=service --state=running", desc: "Running services." },
+            { cmd: "docker ps --format 'table {{.Names}}\\t{{.Ports}}\\t{{.Image}}'", desc: "Container ports at a glance." },
+          ]},
+          { title: "From another machine (coarse)", items: [
+            { cmd: "nmap -sS -T3 -p 1-1000 {{host_or_local}}", desc: "Common ports scan." },
+            { cmd: "nmap -sV --version-light {{host_or_local}}", desc: "Light service fingerprint." },
+          ]}
+        ],
+        kb: [{
+          symptom: "You get 404/502/connection refused but you aren’t sure what should be listening.",
+          likely_causes: ["Wrong port assumed", "Service bound to localhost only", "Port in use by different service"],
+          checks: ["ss -tulpn on server", "docker ps ports", "systemctl status of expected service"],
+          fixes: ["Correct port in proxy/firewall", "Bind service to LAN or proxy locally", "Stop conflicting service or change port"],
+          cautions: ["Don’t expose services just to ‘make it work’; validate access paths first."]
+        }],
+        note: "Always prefer checking listeners on the host itself."
+      },
+
+      // ===== Conflicts
+      {
+        group: "Networking",
+        id: "conflicts",
+        name: "Conflicts (IP/MAC/DHCP)",
+        tag: "dupes + weirdness",
+        hint: "Diagnose duplicate IPs, ARP weirdness, DHCP misbehavior.",
+        chips: ["arp", "ip neigh", "arping", "dhcp"],
+        requires: ["iface", "suspect_ip"],
+        inputs: [
+          { key: "iface", label: "Interface (required)", placeholder: "e.g. eth0" },
+          { key: "suspect_ip", label: "Suspect IP (required)", placeholder: "e.g. 192.168.1.50" }
+        ],
+        blocks: [
+          { title: "Client-side ARP view", items: [
+            { cmd: "ip neigh show | grep {{suspect_ip}} || true", desc: "See which MAC your machine thinks owns the IP." },
+            { cmd: "arp -an | grep {{suspect_ip}} || true", desc: "Classic ARP table view." },
+          ]},
+          { title: "Active duplicate detection", items: [
+            { cmd: "sudo arping -I {{iface}} {{suspect_ip}} -c 5", desc: "If multiple replies/changes, likely duplicate IP." },
+            { cmd: "sudo ip -s neigh flush all && ping -c 1 {{suspect_ip}}; ip neigh show | grep {{suspect_ip}} || true", desc: "Refresh neighbor mapping and re-check." },
+          ]},
+          { title: "DHCP check patterns (server-side)", items: [
+            { cmd: "journalctl -u isc-dhcp-server -n 200 --no-pager 2>/dev/null || true", desc: "If using ISC DHCP." },
+            { cmd: "journalctl -u dnsmasq -n 200 --no-pager 2>/dev/null || true", desc: "If using dnsmasq." },
+          ]},
+        ],
+        kb: [{
+          symptom: "Random disconnects, device ‘steals’ another’s IP, or admin UI flips between two devices.",
+          likely_causes: ["Static IP collides with DHCP pool", "Two DHCP servers active", "Duplicate static assignments", "ARP cache poisoning by misconfig"],
+          checks: ["arping suspect IP", "Check for two DHCP servers", "Review DHCP pool range vs statics"],
+          fixes: ["Move statics outside DHCP pool", "Disable rogue DHCP", "Reserve leases for key devices"],
+          cautions: ["Changing DHCP ranges can kick clients; plan a small window."]
+        }],
+        note: "If you suspect a conflict, arping is usually the fastest proof."
+      },
+
+      // ===== Open ports quick
+      {
+        group: "Networking",
+        id: "openports",
+        name: "Open ports quick",
+        tag: "what is exposed",
+        hint: "Fast methods to list open ports and what owns them.",
+        chips: ["ss", "nmap", "ufw"],
+        requires: ["target"],
+        inputs: [
+          { key: "target", label: "Target host/IP (required)", placeholder: "e.g. 192.168.1.50" }
+        ],
+        blocks: [
+          { title: "On the host (best)", items: [
+            { cmd: "ss -tulpn", desc: "List listeners with process." },
+            { cmd: "sudo lsof -i -P -n | grep LISTEN | head -n 80", desc: "Listeners (if lsof installed)." },
+          ]},
+          { title: "From another machine", items: [
+            { cmd: "nmap -sS -T3 -p 1-1000 {{target}}", desc: "Common ports." },
+            { cmd: "nmap -sS -T3 -p- {{target}} -oN fullscan.txt", desc: "All TCP ports to file." },
+          ]},
+          { title: "Firewall quick views (host)", items: [
+            { cmd: "sudo ufw status verbose 2>/dev/null || true", desc: "If UFW is used." },
+            { cmd: "sudo nft list ruleset 2>/dev/null | head -n 120 || true", desc: "If nftables is used." },
+          ]}
+        ],
+        kb: [{
+          symptom: "You see something exposed unexpectedly.",
+          likely_causes: ["Service installed with default listener", "Container published ports", "Firewall allow rules too broad", "UPnP opened ports at router"],
+          checks: ["Confirm process owning the port", "Check container published ports", "Review firewall rules", "Check router UPnP/port forwards"],
+          fixes: ["Disable service or bind to localhost", "Unpublish container ports", "Tighten firewall rules", "Disable UPnP if not needed"],
+          cautions: ["Do not expose admin ports to WAN."]
+        }],
+        note: "To know what’s truly exposed, test from outside your LAN too."
+      },
+
+      // ===== Data flow monitor
+      {
+        group: "Networking",
+        id: "flow",
+        name: "Data flow monitor",
+        tag: "traffic + captures",
+        hint: "See where bandwidth goes and capture the exact flow.",
+        chips: ["iftop", "nethogs", "tcpdump", "vnstat"],
+        requires: ["iface"],
+        inputs: [
+          { key: "iface", label: "Interface (required)", placeholder: "e.g. eth0" },
+          { key: "filter_host", label: "Host filter (optional)", placeholder: "e.g. 192.168.1.50" },
+          { key: "filter_port", label: "Port filter (optional)", placeholder: "e.g. 443" }
+        ],
+        blocks: [
+          { title: "Live bandwidth", items: [
+            { cmd: "sudo iftop -i {{iface}}", desc: "Top talkers by connection (install iftop if needed)." },
+            { cmd: "sudo nethogs {{iface}}", desc: "Bandwidth by process (install nethogs if needed)." },
+            { cmd: "vnstat -i {{iface}} 2>/dev/null || true", desc: "Historical traffic totals (if vnstat installed)." },
+          ]},
+          { title: "Targeted capture (pcap)", items: [
+            { cmd: "sudo tcpdump -i {{iface}} -nn -s0 -w capture.pcap", desc: "Full capture to file." },
+            { cmd: "sudo tcpdump -i {{iface}} -nn -s0 host {{filter_host}} -w host.pcap", desc: "Only one host (if host filter provided)." },
+            { cmd: "sudo tcpdump -i {{iface}} -nn -s0 port {{filter_port}} -w port.pcap", desc: "Only one port (if port filter provided)." },
+          ]},
+          { text: "For correctness: capture on BOTH ends (client and server) when debugging asymmetric routing or firewall drops.", kind:"warn" }
+        ],
+        kb: [{
+          symptom: "Internet feels slow / random spikes / unknown traffic.",
+          likely_causes: ["Backup jobs, updates, cloud sync", "Misbehaving IoT devices", "Loop/broadcast storm", "Compromised host (rare but possible)"],
+          checks: ["iftop to see top destinations", "nethogs to see top processes", "tcpdump for proof"],
+          fixes: ["Rate-limit or schedule bulk jobs", "Isolate noisy devices (VLAN)", "Fix loops / STP / cabling issues"],
+          cautions: ["Captures may contain sensitive data; store briefly and protect files."]
+        }],
+        note: "iftop/nethogs show ‘who’; tcpdump shows ‘what’."
+      },
+
+      // ===== Proxy/Web/TLS + headers/redirects
+      {
+        group: "Services",
+        id: "headers",
+        name: "Headers + redirects",
+        tag: "loops + scheme",
+        hint: "Diagnose redirect loops and wrong absolute URLs behind proxies.",
+        chips: ["Location", "x-forwarded", "scheme"],
+        requires: ["url"],
+        inputs: [
+          { key: "url", label: "URL (required)", placeholder: "e.g. https://app.example.com" }
+        ],
+        blocks: [
+          { title: "Inspect redirects", items: [
+            { cmd: "curl -I {{url}} | sed -n '1,25p'", desc: "First response headers." },
+            { cmd: "curl -IL {{url}} | sed -n '1,120p'", desc: "Follow redirects and show headers across hops." },
+            { cmd: "curl -IL {{url}} | egrep -i 'HTTP/|Location:'", desc: "Only status lines and redirect targets." }
+          ]},
+          { title: "Typical causes", items: [
+            { cmd: "Missing X-Forwarded-Proto causes app to redirect http↔https.", desc: "App must know external scheme." },
+            { cmd: "Wrong external URL/base URL configured in app.", desc: "Set canonical URL in app settings." },
+            { cmd: "Host header mismatch → wrong vhost → wrong redirects.", desc: "Fix server_name / proxy Host header." }
+          ]}
+        ],
+        kb: [{
+          symptom: "Browser shows too many redirects / ends up on http unexpectedly.",
+          likely_causes: ["App doesn’t trust proxy headers", "X-Forwarded-Proto not set", "App base URL wrong"],
+          checks: ["curl -IL and inspect Location headers", "Verify proxy sets forwarded headers", "Verify app external URL setting"],
+          fixes: ["Set X-Forwarded-Proto/Host/For", "Configure app trusted proxies + base URL", "Ensure proxy uses correct Host header"],
+          cautions: ["Don’t trust forwarded headers from untrusted networks."]
+        }],
+        note: "Location header tells you exactly what the app thinks is correct."
+      },
+
+      // ===== Nginx / Reverse proxy
+      {
+        group: "Services",
+        id: "nginx",
+        name: "Nginx / Reverse proxy",
+        tag: "web",
+        hint: "Diagnose 404/502, vhosts, upstreams, SNI.",
+        chips: ["nginx -T", "server blocks", "host header"],
+        requires: ["target_ip_or_host"],
+        inputs: [
+          { key: "target_ip_or_host", label: "Target IP/host (required)", placeholder: "e.g. 192.168.1.10 or app.example.com" },
+          { key: "host_header", label: "Host header (optional)", placeholder: "e.g. app.example.com" }
+        ],
+        blocks: [
+          { title: "Core checks", items: [
+            { cmd: "sudo nginx -t", desc: "Config syntax test." },
+            { cmd: "sudo systemctl reload nginx", desc: "Reload config." },
+            { cmd: "sudo nginx -T | grep -n 'server_name' | head -n 120", desc: "List server_name lines." },
+            { cmd: "sudo nginx -T | grep -n 'default_server' || true", desc: "Find explicit defaults." }
+          ]},
+          { title: "What answers this request?", items: [
+            { cmd: "curl -i http://{{target_ip_or_host}}/ | head -n 25", desc: "Status + headers." },
+            { cmd: "curl -i -H 'Host: {{host_header}}' http://{{target_ip_or_host}}/ | head -n 30", desc: "Force vhost match (if Host provided)." }
+          ]},
+          { title: "Upstream health", items: [
+            { cmd: "curl -I http://UPSTREAM_IP:PORT/ | head -n 20", desc: "Test upstream directly (replace)." },
+            { cmd: "ss -tulpn | egrep ':80\\b|:443\\b' || true", desc: "Local listeners." }
+          ]}
+        ],
+        kb: [
+          {
+            symptom: "HTTP 404 when you expect an app page.",
+            likely_causes: ["Wrong server block (implicit default vhost)", "server_name mismatch (IP vs hostname)", "Different vhost on HTTP vs HTTPS"],
+            checks: ["nginx -T | grep -n server_name", "curl -H 'Host: expected' http://IP/", "Find default_server or first listen 80 block"],
+            fixes: ["Add correct server_name for expected host/IP", "Add catch-all default that redirects", "Ensure HTTP+HTTPS blocks point to the same app"],
+            cautions: ["default_server changes what IP requests hit on multi-site hosts."]
+          },
+          {
+            symptom: "HTTP 502 Bad Gateway via proxy.",
+            likely_causes: ["Upstream down", "Wrong upstream IP/port", "Firewall blocks proxy→upstream", "Scheme mismatch http vs https"],
+            checks: ["curl upstream directly", "ss -tulpn on upstream", "journalctl -u service on upstream"],
+            fixes: ["Start upstream", "Fix upstream address/port", "Allow proxy subnet to upstream port", "Match proxy_pass scheme"],
+            cautions: ["Avoid disabling TLS verification globally; fix SNI/cert properly."]
+          }
+        ],
+        note: "404 = wrong vhost; 502 = upstream unreachable/down."
+      },
+      {
+        group: "Services",
+        id: "npm",
+        name: "Nginx Proxy Manager",
+        tag: "LE + proxy",
+        hint: "LetsEncrypt challenges, websockets, headers.",
+        chips: ["letsencrypt", "dns challenge", "http challenge"],
+        requires: ["fqdn"],
+        inputs: [{ key: "fqdn", label: "FQDN (required)", placeholder: "e.g. app.example.com" }],
+        blocks: [
+          { title: "Quick tests", items: [
+            { cmd: "dig +short A {{fqdn}}", desc: "Public A record." },
+            { cmd: "dig +short AAAA {{fqdn}}", desc: "IPv6 AAAA record (remove if wrong)." }
+          ]},
+          { title: "HTTP challenge reachability", items: [
+            { cmd: "curl -I http://{{fqdn}}/ | head -n 20", desc: "Port 80 must reach NPM for HTTP challenge." },
+            { cmd: "curl -I http://{{fqdn}}/.well-known/acme-challenge/test 2>/dev/null | head", desc: "Challenge path test." }
+          ]},
+          { text: "If HTTP challenge cannot work (blocked port 80 / CGNAT): use DNS challenge.", kind:"warn" }
+        ],
+        kb: [{
+          symptom: "LetsEncrypt fails in NPM (timeout/unauthorized).",
+          likely_causes: ["DNS points wrong", "80/443 not forwarded", "IPv6 AAAA points elsewhere", "HTTP blocked"],
+          checks: ["dig A/AAAA", "external curl to http://fqdn", "confirm router forwards 80/443 to proxy"],
+          fixes: ["Fix DNS, remove wrong AAAA", "Forward ports and allow in firewall", "Use DNS challenge"],
+          cautions: ["Keep DNS API keys secure."]
+        }],
+        note: "LE failures are usually DNS/ports/challenge mismatch."
+      },
+      {
+        group: "Services",
+        id: "tls",
+        name: "TLS / Certificates",
+        tag: "ssl",
+        hint: "Inspect cert chain, SNI, expiry, hostname match.",
+        chips: ["openssl", "chain", "sni"],
+        requires: ["tls_host"],
+        inputs: [
+          { key: "tls_host", label: "Hostname (required)", placeholder: "e.g. mail.example.com" },
+          { key: "tls_port", label: "Port (optional)", placeholder: "443" }
+        ],
+        blocks: [
+          { cmd: "PORT={{tls_port}}; [ -z \"$PORT\" ] && PORT=443; echo | openssl s_client -connect {{tls_host}}:$PORT -servername {{tls_host}} 2>/dev/null | openssl x509 -noout -issuer -subject -dates", desc: "Issuer/subject/expiry using SNI." },
+          { cmd: "PORT={{tls_port}}; [ -z \"$PORT\" ] && PORT=443; curl -vkI https://{{tls_host}}:$PORT/ 2>&1 | head -n 80", desc: "Verbose TLS + headers." }
+        ],
+        kb: [{
+          symptom: "ERR_CERT_AUTHORITY_INVALID.",
+          likely_causes: ["Self-signed cert", "Missing intermediate chain", "Hostname/SAN mismatch"],
+          checks: ["openssl s_client with -servername", "Confirm SAN contains hostname", "Confirm fullchain served"],
+          fixes: ["Use trusted CA cert for public services", "Serve fullchain", "Access by hostname on cert (not raw IP)"],
+          cautions: ["Do not click through cert warnings on public services."]
+        }],
+        note: "Untrusted errors: chain/issuer/hostname mismatch."
+      },
+      {
+        group: "Services",
+        id: "portmap",
+        name: "Service port map",
+        tag: "common ports",
+        hint: "Quick reference for common homelab ports.",
+        chips: ["ports", "reference"],
+        blocks: [
+          { title: "Common admin UI ports (reference)", items: [
+            { cmd: "Proxmox: 8006 (HTTPS)", desc: "Default web UI port." },
+            { cmd: "Portainer: 9443 (HTTPS), 9000 (HTTP legacy)", desc: "Depends on setup." },
+            { cmd: "Nginx Proxy Manager: 81 (UI), 80/443 (proxy)", desc: "Typical defaults." },
+            { cmd: "Omada Controller: often 8043 (HTTPS), 8088 (HTTP)", desc: "Depends on version/config." }
+          ]},
+          { title: "Mail ports (reference)", items: [
+            { cmd: "SMTP: 25", desc: "Server-to-server." },
+            { cmd: "Submission: 587", desc: "Client submission (STARTTLS)." },
+            { cmd: "IMAPS: 993", desc: "Secure IMAP." }
+          ]}
+        ],
+        kb: [],
+        note: "Verify on your host using: ss -tulpn"
+      },
+      {
+        group: "Services",
+        id: "logs",
+        name: "Log locations",
+        tag: "where to look",
+        hint: "Generic paths for common services.",
+        chips: ["nginx", "apache", "systemd", "docker", "mail"],
+        blocks: [
+          { title: "Linux/systemd", items: [
+            { cmd: "journalctl -u <unit> -n 200 --no-pager", desc: "Most services." },
+            { cmd: "journalctl -xe --no-pager | tail -n 80", desc: "Recent errors across system." }
+          ]},
+          { title: "Web servers", items: [
+            { cmd: "/var/log/nginx/error.log ; /var/log/nginx/access.log", desc: "Nginx (typical)." },
+            { cmd: "/var/log/apache2/error.log ; /var/log/apache2/access.log", desc: "Apache (typical)." }
+          ]},
+          { title: "Docker", items: [
+            { cmd: "docker logs -n 200 <container>", desc: "Container stdout/stderr." }
+          ]},
+          { title: "Mail", items: [
+            { cmd: "/var/log/mail.log (Debian/Ubuntu common)", desc: "Postfix/Dovecot etc." },
+            { cmd: "journalctl -u postfix -n 200 --no-pager", desc: "If using systemd journal." }
+          ]}
+        ],
+        kb: [],
+        note: "Start with the service’s own logs."
+      },
+
+      // ===== ISPConfig / Modoboa / Mail deliverability
+      {
+        group: "Services",
+        id: "ispconfig",
+        name: "ISPConfig quick",
+        tag: "hosting panel",
+        hint: "Ports, vhosts, aliases, common checks.",
+        chips: ["vhosts", "ports", "panel"],
+        blocks: [
+          { cmd: "ss -tulpn | egrep ':8080|:8081|:80|:443' || true", desc: "Find likely panel ports." },
+          { cmd: "apache2ctl -S 2>/dev/null | sed -n '1,120p' || true", desc: "Apache vhost map." },
+          { cmd: "nginx -T 2>/dev/null | grep -n 'server_name' | head -n 80 || true", desc: "Nginx vhost map." }
+        ],
+        kb: [{
+          symptom: "Panel works locally but reverse proxy shows 502/404.",
+          likely_causes: ["Wrong upstream port", "Redirect/scheme mismatch", "Upstream bound to localhost only"],
+          checks: ["curl upstream directly from proxy", "Check Location headers", "Check listen/bind address"],
+          fixes: ["Fix upstream port/scheme", "Set X-Forwarded-Proto/Host", "Bind upstream to LAN or proxy locally"],
+          cautions: ["Admin panels should be access-controlled."]
+        }],
+        note: "Panels often run on alternate ports."
+      },
+      {
+        group: "Services",
+        id: "modoboa",
+        name: "Modoboa",
+        tag: "mail platform",
+        hint: "GUI on 80/443 via web server. IP vs hostname matters.",
+        chips: ["nginx", "server blocks", "host header"],
+        requires: ["modoboa_ip_or_host"],
+        inputs: [
+          { key: "modoboa_ip_or_host", label: "Modoboa IP or host (required)", placeholder: "e.g. 192.168.1.50 or mail.example.com" },
+          { key: "modoboa_host_header", label: "Modoboa hostname (optional)", placeholder: "e.g. mail.example.com" }
+        ],
+        blocks: [
+          { title: "Verify what answers", items: [
+            { cmd: "curl -i http://{{modoboa_ip_or_host}}/ | head -n 25", desc: "If Nginx 404, likely default vhost." },
+            { cmd: "curl -i -H 'Host: {{modoboa_host_header}}' http://{{modoboa_ip_or_host}}/ | head -n 30", desc: "Force Host header match (if hostname provided)." }
+          ]},
+          { title: "Locate server blocks", items: [
+            { cmd: "sudo nginx -T | grep -n 'server_name' | egrep 'mail|autoconfig|autodiscover' || true", desc: "Find mail vhosts." },
+            { cmd: "sudo nginx -T | grep -n 'listen 80' | head -n 60", desc: "Who listens on 80." },
+            { cmd: "sudo nginx -T | grep -n 'default_server' || true", desc: "Find explicit default." }
+          ]}
+        ],
+        kb: [{
+          symptom: "80/443 returns 404 but Modoboa is installed.",
+          likely_causes: ["Wrong server block hit (default vhost)", "server_name mismatch", "HTTPS without SNI hits different SSL vhost"],
+          checks: ["Find server_name in nginx -T", "curl with Host header", "For HTTPS: curl --resolve host:443:IP https://host/"],
+          fixes: ["Add correct server_name or IP redirect vhost", "Set a safe default_server redirect", "Use hostname for TLS correctness"],
+          cautions: ["Raw IP access breaks TLS hostname validation."]
+        }],
+        note: "If IP gets 404: default vhost, not Modoboa."
+      },
+      {
+        group: "Services",
+        id: "maildeliver",
+        name: "Mail deliverability",
+        tag: "SPF/DKIM/DMARC",
+        hint: "Quick checks for DNS records + SMTP testing.",
+        chips: ["spf", "dkim", "dmarc", "smtp"],
+        requires: ["mail_domain"],
+        inputs: [{ key: "mail_domain", label: "Domain (required)", placeholder: "e.g. example.com" }],
+        blocks: [
+          { title: "DNS checks", items: [
+            { cmd: "dig +short TXT {{mail_domain}}", desc: "SPF often here." },
+            { cmd: "dig +short TXT _dmarc.{{mail_domain}}", desc: "DMARC." },
+            { cmd: "dig +short MX {{mail_domain}}", desc: "MX records." },
+            { cmd: "dig +short TXT selector1._domainkey.{{mail_domain}}", desc: "DKIM example (selector varies)." }
+          ]},
+          { title: "SMTP connectivity", items: [
+            { cmd: "nc -vz mail.{{mail_domain}} 25", desc: "TCP connect test (if host exists)." },
+            { cmd: "openssl s_client -connect mail.{{mail_domain}}:587 -starttls smtp", desc: "STARTTLS on submission." }
+          ]}
+        ],
+        kb: [{
+          symptom: "Mail in spam or DMARC fails alignment.",
+          likely_causes: ["SPF missing/misaligned", "DKIM selector missing/wrong", "DMARC too strict too early", "Sending via relay but DNS not updated"],
+          checks: ["Confirm SPF includes your sender", "Verify DKIM selector exists and matches signing", "Start DMARC p=none and review reports"],
+          fixes: ["Fix SPF includes", "Enable DKIM signing and publish key", "Tighten DMARC after stable"],
+          cautions: ["Validate SPF before publishing to avoid breaking mail."]
+        }],
+        note: "Deliverability is mostly DNS + alignment + reputation."
+      },
+
+      // ===== Networking VLAN/routing/firewall/DNS
+      {
+        group: "Networking",
+        id: "vlan",
+        name: "VLAN / Switching",
+        tag: "trunk vs access",
+        hint: "Port modes, tagging, LLDP, Linux VLAN quick commands.",
+        chips: ["trunk", "access", "tagged", "lldp"],
+        requires: ["iface","vid"],
+        inputs: [
+          { key: "iface", label: "Interface (required)", placeholder: "e.g. eth0" },
+          { key: "vid", label: "VLAN ID (required)", placeholder: "e.g. 20" }
+        ],
+        blocks: [
+          { title: "Linux VLAN tagging", items: [
+            { cmd: "sudo ip link add link {{iface}} name {{iface}}.{{vid}} type vlan id {{vid}}", desc: "Create VLAN subinterface." },
+            { cmd: "sudo ip link set {{iface}}.{{vid}} up", desc: "Bring VLAN interface up." },
+            { cmd: "sudo ip addr add X.X.X.X/YY dev {{iface}}.{{vid}}", desc: "Assign IP (replace)." },
+            { cmd: "ip -d link show {{iface}}.{{vid}}", desc: "Show VLAN details." }
+          ]},
+          { title: "Discovery", items: [
+            { cmd: "ip a; ip r", desc: "Interfaces + routes." },
+            { cmd: "sudo lldpctl 2>/dev/null || true", desc: "LLDP neighbors (if installed)." }
+          ]}
+        ],
+        kb: [{
+          symptom: "Port in VLAN gets IP but no internet.",
+          likely_causes: ["DNS wrong/unreachable", "Firewall blocks VLAN→WAN", "Wrong gateway handed out"],
+          checks: ["Ping public IP then test DNS", "Verify firewall allow + NAT", "Check DHCP options (GW/DNS)"],
+          fixes: ["Fix DHCP DNS/GW", "Add allow VLAN→WAN + NAT", "Confirm trunk allows VLAN tagged"],
+          cautions: ["Keep inter-VLAN access minimal."]
+        }],
+        note: "Most VLAN issues = wrong port mode or VLAN not allowed on trunk."
+      },
+      {
+        group: "Networking",
+        id: "routing",
+        name: "Routing basics",
+        tag: "paths & gateways",
+        hint: "Default routes, reachability, traceroute/mtr.",
+        chips: ["ip route", "mtr", "traceroute"],
+        requires: ["dest"],
+        inputs: [{ key: "dest", label: "Destination IP/host (required)", placeholder: "e.g. 1.1.1.1 or server.example.com" }],
+        blocks: [
+          { cmd: "ip r", desc: "Confirm default gateway." },
+          { cmd: "ping -c 3 {{dest}}", desc: "Basic reachability." },
+          { cmd: "traceroute {{dest}} 2>/dev/null || true", desc: "Path trace." },
+          { cmd: "mtr -rw {{dest}} 2>/dev/null || true", desc: "Loss/latency along path." }
+        ],
+        kb: [{
+          symptom: "Can ping gateway but not internet.",
+          likely_causes: ["DNS failure", "Firewall blocks outbound", "No NAT for subnet", "Wrong default gateway"],
+          checks: ["Ping a public IP (bypasses DNS)", "Check NAT/outbound rules for subnet", "Check firewall allow rules VLAN→WAN"],
+          fixes: ["Fix DNS", "Add/repair NAT + allow rules", "Correct DHCP gateway option"],
+          cautions: ["Avoid multiple gateways unless doing policy routing."]
+        }],
+        note: "Test IP reachability and DNS separately."
+      },
+      {
+        group: "Networking",
+        id: "firewall",
+        name: "Firewall sanity",
+        tag: "allow/deny",
+        hint: "Rule order, state, and testing patterns.",
+        chips: ["stateful", "rules", "logs"],
+        requires: ["dst","port"],
+        inputs: [
+          { key: "dst", label: "Destination IP (required)", placeholder: "e.g. 192.168.20.10" },
+          { key: "port", label: "Destination port (required)", placeholder: "e.g. 443" }
+        ],
+        blocks: [
+          { cmd: "nc -vz {{dst}} {{port}}", desc: "TCP connect test." },
+          { cmd: "sudo tcpdump -i any -nn host {{dst}} and port {{port}}", desc: "See SYN/SYN-ACK flow (on client/gateway/dst)." }
+        ],
+        kb: [{
+          symptom: "Connection times out (no response).",
+          likely_causes: ["Firewall drop", "Routing blackhole/no return path", "Service not listening"],
+          checks: ["On dst: ss -tulpn | grep PORT", "Check firewall logs for flow", "tcpdump on both ends"],
+          fixes: ["Add explicit allow rule source→dst:port", "Fix routes/return route", "Start service / correct port"],
+          cautions: ["Enable logging temporarily; reduce later to avoid noise."]
+        }],
+        note: "Debug pattern: allow narrowly → confirm → tighten."
+      },
+      {
+        group: "Networking",
+        id: "pihole",
+        name: "Pi-hole / DNS",
+        tag: "resolution",
+        hint: "When VLAN clients have 'no internet' due to DNS.",
+        chips: ["dns", "resolver", "fallback"],
+        requires: ["dns_server"],
+        inputs: [{ key: "dns_server", label: "DNS server IP (required)", placeholder: "e.g. 192.168.1.2" }],
+        blocks: [
+          { cmd: "ping -c 3 1.1.1.1", desc: "If this fails too, it’s routing/firewall." },
+          { cmd: "dig @{{dns_server}} +short A example.com", desc: "Query your DNS directly." },
+          { cmd: "nslookup example.com {{dns_server}}", desc: "Alternative test." },
+          { cmd: "ss -tulpn | egrep ':53\\b' || true", desc: "On DNS box: confirm listening on 53." }
+        ],
+        kb: [{
+          symptom: "VLAN gets IP but “no internet” while ping to public IP works.",
+          likely_causes: ["DNS unreachable from VLAN", "Firewall blocks 53", "DNS only bound to one interface"],
+          checks: ["dig @DNS_IP example.com from VLAN", "Allow VLAN→DNS 53 UDP/TCP", "Check DNS listen settings"],
+          fixes: ["Set VLAN DHCP DNS correctly", "Add firewall rule VLAN→DNS", "Bind DNS to required interfaces/subnets"],
+          cautions: ["Have a backup resolver for outages."]
+        }],
+        note: "Always test ping (IP) separately from DNS."
+      },
+
+      // ===== Firewall patterns
+      {
+        group: "Runbooks",
+        id: "fwpatterns",
+        name: "Firewall rule patterns",
+        tag: "safe defaults",
+        hint: "Common allow-list patterns for homelabs (conceptual + tests).",
+        chips: ["dns", "ntp", "allowlist", "test"],
+        requires: ["client_net"],
+        inputs: [
+          { key: "client_net", label: "Client subnet (required)", placeholder: "e.g. 192.168.10.0/24" },
+          { key: "dns_ip", label: "DNS IP (optional)", placeholder: "e.g. 192.168.1.2" },
+          { key: "ntp_ip", label: "NTP IP (optional)", placeholder: "e.g. 192.168.1.1" }
+        ],
+        blocks: [
+          { title: "Typical minimal outbound for a user VLAN", items: [
+            { cmd: "Allow {{client_net}} → DNS (UDP/TCP 53) to {{dns_ip}}", desc: "Name resolution." },
+            { cmd: "Allow {{client_net}} → NTP (UDP 123) to {{ntp_ip}}", desc: "Time sync." },
+            { cmd: "Allow {{client_net}} → Internet (80/443) as needed", desc: "Web access." },
+            { cmd: "Block {{client_net}} → other internal VLANs by default", desc: "Add explicit exceptions only." }
+          ]},
+          { title: "Proving a firewall rule works", items: [
+            { cmd: "nc -vz <dst_ip> <port>", desc: "Quick TCP reachability check." },
+            { cmd: "dig @{{dns_ip}} +short example.com", desc: "DNS proof test." },
+            { cmd: "tcpdump -i any -nn host <dst_ip> and port <port>", desc: "Packet-level proof (see SYN/SYN-ACK)." }
+          ]}
+        ],
+        kb: [{
+          symptom: "A VLAN has IP but can’t do anything useful.",
+          likely_causes: ["DNS/NTP blocked", "No allow rule to WAN", "No NAT for that VLAN"],
+          checks: ["Ping public IP", "dig to DNS", "Check firewall logs for drops"],
+          fixes: ["Add minimal allow rules (DNS/NTP/WAN)", "Add/repair NAT", "Keep inter-VLAN blocked by default"],
+          cautions: ["Avoid ‘allow any any’ as a permanent fix."]
+        }],
+        note: "Use allow-lists and test each dependency explicitly."
+      },
+
+      // ===== Backout / rollback
+      {
+        group: "Runbooks",
+        id: "rollback",
+        name: "Backout / rollback",
+        tag: "undo safely",
+        hint: "Minimal rollback steps for common changes.",
+        chips: ["nginx", "firewall", "switch"],
+        blocks: [
+          { title: "Nginx rollback pattern", items: [
+            { cmd: "sudo cp -a /etc/nginx /etc/nginx.bak.$(date +%F_%H%M%S)", desc: "Snapshot configs before changes." },
+            { cmd: "sudo nginx -t", desc: "Validate syntax before reload." },
+            { cmd: "sudo systemctl reload nginx", desc: "Reload safely." },
+            { cmd: "sudo systemctl restart nginx", desc: "Restart only if reload isn’t enough." }
+          ]},
+          { title: "Firewall rollback pattern (generic)", items: [
+            { cmd: "Export rules before edits (use your platform’s export).", desc: "Always have a restore point." },
+            { cmd: "If locked out: use local console access to revert last rule set.", desc: "Plan the recovery path first." }
+          ]},
+          { title: "Switch rollback pattern (conceptual)", items: [
+            { cmd: "If you changed management VLAN: ensure your laptop port is in mgmt VLAN (access) before applying.", desc: "Avoid self-lockout." },
+            { cmd: "If locked out: console/serial or physical reset path.", desc: "Have the cable and steps ready." }
+          ]}
+        ],
+        kb: [{
+          symptom: "You applied a change and lost access.",
+          likely_causes: ["Mgmt VLAN moved out from under you", "Firewall rule blocked admin access", "Wrong trunk/access mode"],
+          checks: ["Console access to device/host", "Verify port mode and VLAN membership", "Restore last-known-good config"],
+          fixes: ["Revert last change first; then reapply in smaller steps", "Keep a ‘break-glass’ management path"],
+          cautions: ["Do not iterate blindly when locked out; revert, regain access, then proceed."]
+        }],
+        note: "Before a risky change: backup + know your ‘break-glass’ path."
+      },
+
+      // ===== Config backup snippets
+      {
+        group: "Infra",
+        id: "cfgbackup",
+        name: "Config backup snippets",
+        tag: "snapshot configs",
+        hint: "Quick ways to snapshot configs for rollback.",
+        chips: ["tar", "rsync", "git"],
+        requires: ["backup_dir"],
+        inputs: [
+          { key: "backup_dir", label: "Backup dir path (required)", placeholder: "e.g. /mnt/backup/configs" }
+        ],
+        blocks: [
+          { title: "Web server configs", items: [
+            { cmd: "sudo mkdir -p {{backup_dir}}", desc: "Ensure destination exists." },
+            { cmd: "sudo tar -czf {{backup_dir}}/nginx_$(date +%F_%H%M%S).tar.gz /etc/nginx 2>/dev/null || true", desc: "Archive Nginx config." },
+            { cmd: "sudo tar -czf {{backup_dir}}/apache2_$(date +%F_%H%M%S).tar.gz /etc/apache2 2>/dev/null || true", desc: "Archive Apache config." }
+          ]},
+          { title: "Systemd unit snapshots", items: [
+            { cmd: "sudo tar -czf {{backup_dir}}/systemd_$(date +%F_%H%M%S).tar.gz /etc/systemd/system 2>/dev/null || true", desc: "Custom units/overrides." }
+          ]},
+          { title: "Docker compose dirs (manual)", items: [
+            { cmd: "sudo rsync -avh /opt/your-compose-stack/ {{backup_dir}}/compose/your-compose-stack/", desc: "Copy compose stack directory (replace path)." }
+          ]},
+          { text: "Option: store configs in git (private repo) for diff + history. Avoid committing secrets.", kind:"warn" }
+        ],
+        kb: [{
+          symptom: "You need to revert but can’t remember what changed.",
+          likely_causes: ["No snapshot before edits", "Multiple edits across files"],
+          checks: ["Compare backups by timestamp", "Use diff between snapshots"],
+          fixes: ["Adopt ‘backup-before-change’ habit", "Use git for config history (exclude secrets)"],
+          cautions: ["Backups may contain secrets; protect them."]
+        }],
+        note: "Backups are rollback fuel. Do them before edits."
+      },
+
+      // ===== Credential hygiene
+      {
+        group: "Infra",
+        id: "sechygiene",
+        name: "Credential hygiene",
+        tag: "keys + exposure",
+        hint: "Operational checks to reduce accidental exposure.",
+        chips: ["ssh keys", "api keys", "wan exposure"],
+        blocks: [
+          { title: "SSH", items: [
+            { cmd: "Use key auth (ed25519) and disable password auth once verified.", desc: "Reduces brute-force risk." },
+            { cmd: "Restrict admin panels to LAN/VPN; avoid WAN exposure.", desc: "Primary safety rule." }
+          ]},
+          { title: "API keys (DNS challenge etc.)", items: [
+            { cmd: "Store keys as secrets (env files with 600 perms), not in git.", desc: "Prevent leaks." },
+            { cmd: "Use least-privileged keys when possible.", desc: "Limit blast radius." }
+          ]},
+          { title: "Exposure checks", items: [
+            { cmd: "From outside LAN: scan only what you intentionally publish (80/443).", desc: "Confirm there’s no accidental exposure." },
+            { cmd: "Disable UPnP if you don’t need it.", desc: "Prevents surprise port openings." }
+          ]}
+        ],
+        kb: [{
+          symptom: "You discovered a management UI accessible from the internet.",
+          likely_causes: ["Port forward added accidentally", "UPnP opened ports", "Firewall too permissive"],
+          checks: ["Review router port forwards and UPnP mappings", "Check firewall WAN rules", "Confirm what is listening on exposed ports"],
+          fixes: ["Remove forwards, disable UPnP, restrict by VPN/allow-list"],
+          cautions: ["Treat accidental exposure as an incident; rotate passwords/keys if unsure."]
+        }],
+        note: "If it’s admin/control-plane: keep it off WAN."
+      },
+
+      // ===== Proxmox
+      {
+        group: "Infra",
+        id: "proxmox",
+        name: "Proxmox reachability",
+        tag: "pve",
+        hint: "When GUI IP shows on console but not reachable.",
+        chips: ["vmbr", "routes", "firewall"],
+        blocks: [
+          { cmd: "ip a", desc: "Confirm IP is assigned." },
+          { cmd: "ip r", desc: "Confirm default route." },
+          { cmd: "ss -tulpn | grep 8006 || true", desc: "Confirm pveproxy listens." },
+          { cmd: "systemctl status pveproxy --no-pager", desc: "Proxy status." },
+          { cmd: "cat /etc/network/interfaces", desc: "Review bridge/VLAN config." }
+        ],
+        kb: [{
+          symptom: "Console shows https://IP:8006 but unreachable from LAN.",
+          likely_causes: ["Wrong VLAN/subnet", "No return route", "Host firewall blocks 8006", "IP changed"],
+          checks: ["Ping from same subnet", "Confirm IP/route on PVE", "Check switch port VLAN mode"],
+          fixes: ["Put mgmt on correct VLAN/subnet", "Fix gateway/routes", "Allow 8006 (test) then secure"],
+          cautions: ["Do not expose management broadly."]
+        }],
+        note: "Check IP, bridge/VLAN tagging, route, firewall."
+      },
+      {
+        group: "Infra",
+        id: "docker",
+        name: "Docker / Portainer",
+        tag: "containers",
+        hint: "Restart loops, disk full, logs, cleanup.",
+        chips: ["logs", "inspect", "prune"],
+        blocks: [
+          { title: "Core", items: [
+            { cmd: "docker ps -a", desc: "All containers." },
+            { cmd: "docker logs -n 200 <container>", desc: "Recent logs." },
+            { cmd: "docker inspect <container> | head", desc: "Metadata." }
+          ]},
+          { title: "Disk usage", items: [
+            { cmd: "docker system df", desc: "Docker disk usage summary." },
+            { cmd: "df -hT", desc: "Filesystem usage." },
+            { cmd: "sudo du -xhd1 /var/lib/docker | sort -h", desc: "Docker space hotspots." }
+          ]}
+        ],
+        kb: [{
+          symptom: "Container stuck restarting.",
+          likely_causes: ["Disk full", "Bad config/env", "Port conflict", "Volume permissions"],
+          checks: ["docker logs", "df -hT", "docker port <container>"],
+          fixes: ["Free space; restart", "Fix config and redeploy", "Fix permissions"],
+          cautions: ["Avoid destructive prune actions without a recovery plan."]
+        }],
+        note: "If it restarts: logs + disk usage first."
+      },
+      {
+        group: "Infra",
+        id: "storage",
+        name: "Storage / Disk",
+        tag: "space",
+        hint: "Find what’s full; deleted-but-open files.",
+        chips: ["df", "du", "lsof"],
+        blocks: [
+          { cmd: "df -hT", desc: "Disk usage + filesystem type." },
+          { cmd: "sudo du -xhd1 /var | sort -h", desc: "Top /var usage." },
+          { cmd: "sudo lsof +L1 | head -n 40", desc: "Deleted-but-open files consuming space." },
+          { cmd: "journalctl --disk-usage", desc: "Journal size." },
+          { cmd: "sudo journalctl --vacuum-time=7d", desc: "Trim journals older than 7 days." }
+        ],
+        kb: [],
+        note: "Disk full issues often hide in logs/containers/open files."
+      },
+
+      // ===== Backups + monitoring
+      {
+        group: "Infra",
+        id: "backups",
+        name: "Backups",
+        tag: "runbooks",
+        hint: "rsync patterns + verification.",
+        chips: ["rsync", "verify"],
+        blocks: [
+          { cmd: "rsync -avh --progress /src/ /mnt/backup/src/", desc: "Copy src to backup." },
+          { cmd: "rsync -avh --delete --progress /src/ /mnt/backup/src/", desc: "Mirror (CAUTION: deletes removed files)." },
+          { cmd: "mount | grep backup || true", desc: "Confirm backup disk is mounted." },
+          { cmd: "df -h", desc: "Confirm space on backup target." }
+        ],
+        kb: [{
+          symptom: "Backups run but restores fail / data missing.",
+          likely_causes: ["Wrong source path", "Permissions excluded files", "Backup disk not mounted"],
+          checks: ["Verify mount", "Verify destination contents", "Test a restore monthly"],
+          fixes: ["Correct rsync paths", "Run with proper permissions", "Add alerts for failures/low disk"],
+          cautions: ["Test restores; don’t trust green checkmarks alone."]
+        }],
+        note: "A backup you haven’t restored is not a backup."
+      },
+      {
+        group: "Infra",
+        id: "monitor",
+        name: "Monitoring quick",
+        tag: "latency & health",
+        hint: "mtr/iperf/smartctl and baselines.",
+        chips: ["mtr", "iperf3", "smartctl"],
+        requires: ["mon_target"],
+        inputs: [{ key: "mon_target", label: "Target host/IP (required)", placeholder: "e.g. 1.1.1.1 or server.lan" }],
+        blocks: [
+          { cmd: "ping -c 20 {{mon_target}}", desc: "Ping baseline." },
+          { cmd: "mtr -rw {{mon_target}} 2>/dev/null || true", desc: "Loss/latency along path." },
+          { cmd: "iperf3 -s", desc: "Server side." },
+          { cmd: "iperf3 -c {{mon_target}}", desc: "Client side throughput test." },
+          { cmd: "sudo smartctl -a /dev/sdX", desc: "Disk SMART (replace sdX)." }
+        ],
+        kb: [],
+        note: "Measure latency, loss, throughput, disk health."
+      }
+    ];
+
+    // State management
+    let state = {
+      activeId: "truth",
+      filter: "",
+      perBlockCopy: false,
+      runbook: true,
+      inputs: {},
+      theme: 'dark'
+    };
+
+    // Get tab by ID
+    function getTab(id) {
+      return DATA.find(t => t.id === id) || DATA[0];
+    }
+
+    // Ensure tab inputs exist
+    function ensureTabInputs(tab) {
+      if (!state.inputs[tab.id]) state.inputs[tab.id] = {};
+      (tab.inputs || []).forEach(i => {
+        if (state.inputs[tab.id][i.key] === undefined) {
+          state.inputs[tab.id][i.key] = "";
+        }
+      });
+    }
+
+    // Check if tab is ready (all required inputs filled)
+    function isReady(tab) {
+      if (!tab.requires || tab.requires.length === 0) return true;
+      const vals = state.inputs[tab.id] || {};
+      return tab.requires.every(k => (vals[k] || "").trim().length > 0);
+    }
+
+    // Render sidebar tabs
+    function renderTabs() {
+      const elTabs = $("tabs");
+      elTabs.innerHTML = "";
+      const q = state.filter.trim().toLowerCase();
+
+      // Group tabs
+      const groups = {};
+      for (const t of DATA) {
+        const g = t.group || "Other";
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(t);
+      }
+
+      const order = ["Tools", "Runbooks", "Cheatsheets", "Services", "Networking", "Infra", "Other"];
+
+      for (const g of order) {
+        const list = (groups[g] || []).filter(t => {
+          if (!q) return true;
+          return (t.name + " " + t.tag + " " + (t.chips || []).join(" ")).toLowerCase().includes(q);
+        });
+
+        if (list.length === 0) continue;
+
+        const groupEl = document.createElement("div");
+        groupEl.className = "group-title";
+        groupEl.textContent = g;
+        elTabs.appendChild(groupEl);
+
+        list.forEach(tab => {
+          const btn = document.createElement("button");
+          btn.className = `tab ${tab.id === state.activeId ? "active" : ""}`;
+          btn.onclick = () => {
+            state.activeId = tab.id;
+            renderAll();
+          };
+          btn.innerHTML = `
+            <span class="tab-name">${escapeHtml(tab.name)}</span>
+            <span class="tab-tag">${escapeHtml(tab.tag)}</span>
+          `;
+          elTabs.appendChild(btn);
+        });
+      }
+    }
+
+    // Render meta chips
+    function renderMeta(tab) {
+      const elMeta = $("metaChips");
+      elMeta.innerHTML = "";
+      (tab.chips || []).forEach(c => {
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        chip.textContent = c;
+        elMeta.appendChild(chip);
+      });
+    }
+
+    // Render inputs
+    function renderInputs(tab) {
+      const elInputs = $("inputs");
+      ensureTabInputs(tab);
+      const inputs = tab.inputs || [];
+
+      if (inputs.length === 0) {
+        elInputs.style.display = "none";
+        return;
+      }
+
+      elInputs.style.display = "grid";
+      elInputs.innerHTML = "";
+
+      inputs.forEach(i => {
+        const group = document.createElement("div");
+        group.className = "input-group";
+        
+        const label = document.createElement("label");
+        label.textContent = i.label;
+        group.appendChild(label);
+
+        if (i.key === "ip_list") {
+          const textarea = document.createElement("textarea");
+          textarea.setAttribute("data-key", i.key);
+          textarea.placeholder = i.placeholder || "";
+          textarea.value = state.inputs[tab.id][i.key] || "";
+          textarea.addEventListener("input", (e) => {
+            state.inputs[tab.id][i.key] = e.target.value;
+            renderGateToolsContentKB(tab);
+          });
+          group.appendChild(textarea);
+        } else {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.setAttribute("data-key", i.key);
+          input.placeholder = i.placeholder || "";
+          input.value = state.inputs[tab.id][i.key] || "";
+          input.addEventListener("input", (e) => {
+            state.inputs[tab.id][i.key] = e.target.value;
+            renderGateToolsContentKB(tab);
+          });
+          group.appendChild(input);
+        }
+
+        elInputs.appendChild(group);
+      });
+    }
+
+    // Render gate (warning when inputs missing)
+    function renderGate(tab) {
+      const elGate = $("gate");
+      const ready = isReady(tab);
+
+      if (ready) {
+        elGate.style.display = "none";
+        return;
+      }
+
+      elGate.style.display = "flex";
+      elGate.className = "message warning";
+      elGate.innerHTML = `
+        <span>⚠️</span>
+        <span>This section needs input before showing commands. Provide: <strong>${escapeHtml((tab.requires || []).join(", "))}</strong></span>
+      `;
+    }
+
+    // Render command block
+    function renderCommandBlock(cmd, desc) {
+      const block = document.createElement("div");
+      block.className = "command-block";
+
+      const header = document.createElement("div");
+      header.className = "command-header";
+      header.innerHTML = `<span class="desc">${escapeHtml(desc || "")}</span>`;
+      block.appendChild(header);
+
+      const content = document.createElement("div");
+      content.className = "command-content";
+      
+      const pre = document.createElement("pre");
+      pre.textContent = cmd;
+      content.appendChild(pre);
+
+      if (state.perBlockCopy) {
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.innerHTML = '<span>📋</span> Copy';
+        copyBtn.onclick = async () => {
+          const success = await copyText(cmd);
+          showToast(success ? "✅ Copied!" : "❌ Copy failed", success ? "success" : "error");
+        };
+        content.appendChild(copyBtn);
+      }
+
+      block.appendChild(content);
+      return block;
+    }
+
+    // Render content (commands)
+    function renderContent(tab) {
+      const elContent = $("content");
+      elContent.innerHTML = "";
+
+      if (!isReady(tab)) {
+        elContent.innerHTML = '<div class="message info">🔒 Fill required inputs above to reveal commands</div>';
+        return;
+      }
+
+      const values = state.inputs[tab.id] || {};
+
+      (tab.blocks || []).forEach(b => {
+        if (b.cmd) {
+          elContent.appendChild(renderCommandBlock(applyTemplate(b.cmd, values), b.desc));
+        } else if (b.title && Array.isArray(b.items)) {
+          const title = document.createElement("h4");
+          title.style.margin = "20px 0 10px";
+          title.style.color = "var(--text-secondary)";
+          title.textContent = b.title;
+          elContent.appendChild(title);
+
+          b.items.forEach(it => {
+            elContent.appendChild(renderCommandBlock(applyTemplate(it.cmd, values), it.desc));
+          });
+        } else if (b.text) {
+          const msg = document.createElement("div");
+          msg.className = `message ${b.kind || "info"}`;
+          msg.innerHTML = `<span>${b.kind === "warn" ? "⚠️" : "ℹ️"}</span> ${escapeHtml(applyTemplate(b.text, values))}`;
+          elContent.appendChild(msg);
+        }
+      });
+    }
+
+    // Render KB playbook
+    function renderKB(tab) {
+      const elKB = $("kb");
+      const elKBSection = $("kbSection");
+
+      elKB.innerHTML = "";
+      
+      if (!state.runbook || !tab.kb || tab.kb.length === 0) {
+        elKBSection.style.display = "none";
+        return;
+      }
+
+      elKBSection.style.display = "block";
+
+      tab.kb.forEach(entry => {
+        const entryEl = document.createElement("div");
+        entryEl.className = "kb-entry";
+
+        entryEl.innerHTML = `
+          <div class="kb-symptom">${escapeHtml(entry.symptom)}</div>
+          ${entry.likely_causes ? `
+            <div class="kb-section">
+              <div class="kb-section-title">🔍 Likely causes</div>
+              <ul class="kb-items">
+                ${entry.likely_causes.map(c => `<li>${escapeHtml(c)}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+          ${entry.checks ? `
+            <div class="kb-section">
+              <div class="kb-section-title">✅ Checks</div>
+              <ul class="kb-items">
+                ${entry.checks.map(c => `<li>${escapeHtml(c)}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+          ${entry.fixes ? `
+            <div class="kb-section">
+              <div class="kb-section-title">🛠️ Fixes</div>
+              <ul class="kb-items">
+                ${entry.fixes.map(f => `<li>${escapeHtml(f)}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+          ${entry.cautions ? `
+            <div class="kb-section">
+              <div class="kb-section-title">⚠️ Cautions</div>
+              <ul class="kb-items">
+                ${entry.cautions.map(c => `<li>${escapeHtml(c)}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+        `;
+
+        elKB.appendChild(entryEl);
+      });
+    }
+
+    // Render tools (subnet calculator, IP sort, etc.)
+    function renderTools(tab) {
+      const elTools = $("tools");
+      elTools.style.display = "none";
+      elTools.innerHTML = "";
+
+      if (!tab.tools) return;
+
+      elTools.style.display = "block";
+      const kind = tab.tools.kind;
+      const values = state.inputs[tab.id] || {};
+
+      const toolsDiv = document.createElement("div");
+      toolsDiv.className = "tool-output";
+
+      if (kind === "subnet") {
+        const cidr = (values.cidr || "").trim();
+        const parsed = cidr ? parseCidr(cidr) : null;
+
+        if (!cidr) {
+          toolsDiv.innerHTML = '<div class="message info">📝 Enter a CIDR above to calculate subnet details</div>';
+        } else if (!parsed) {
+          toolsDiv.innerHTML = '<div class="message error">❌ Invalid CIDR format. Use: 192.168.1.0/24</div>';
+        } else {
+          const maskIp = intToIpv4(parsed.mask);
+          const net = intToIpv4(parsed.net);
+          const bcast = intToIpv4(parsed.bcast);
+          const first = parsed.first === null ? "—" : intToIpv4(parsed.first);
+          const last = parsed.last === null ? "—" : intToIpv4(parsed.last);
+
+          toolsDiv.innerHTML = `
+            <div class="tool-grid">
+              <div class="stats">
+                <div class="stat"><strong>Network:</strong> ${escapeHtml(net)}</div>
+                <div class="stat"><strong>Broadcast:</strong> ${escapeHtml(bcast)}</div>
+                <div class="stat"><strong>Netmask:</strong> ${escapeHtml(maskIp)}</div>
+              </div>
+              <div class="stats">
+                <div class="stat"><strong>Range:</strong> ${escapeHtml(first)} → ${escapeHtml(last)}</div>
+                <div class="stat"><strong>Hosts:</strong> ${escapeHtml(String(parsed.hosts))}</div>
+              </div>
+            </div>
+          `;
+        }
+      } else if (kind === "ipsort") {
+        const text = values.ip_list || "";
+        const result = sortIpv4List(text);
+
+        toolsDiv.innerHTML = `
+          <div class="tool-grid">
+            <div>
+              <div style="margin-bottom: 8px;"><strong>✅ Valid IPs (${result.valid.length})</strong></div>
+              <pre style="max-height: 200px;">${escapeHtml(result.valid.join('\n') || '—')}</pre>
+              <button class="btn" id="copySorted" style="margin-top: 8px;">📋 Copy sorted</button>
+            </div>
+            <div>
+              <div style="margin-bottom: 8px;"><strong>❌ Invalid lines (${result.invalid.length})</strong></div>
+              <pre style="max-height: 200px;">${escapeHtml(result.invalid.join('\n') || '—')}</pre>
+              <button class="btn" id="copyInvalid" style="margin-top: 8px;">📋 Copy invalid</button>
+            </div>
+          </div>
+        `;
+
+        setTimeout(() => {
+          $("copySorted")?.addEventListener("click", async () => {
+            await copyText(result.valid.join('\n'));
+            showToast("✅ Sorted IPs copied!");
+          });
+          $("copyInvalid")?.addEventListener("click", async () => {
+            await copyText(result.invalid.join('\n'));
+            showToast("✅ Invalid lines copied!");
+          });
+        }, 0);
+      } else if (kind === "tlscmd") {
+        const host = (values.host || "").trim();
+        const port = (values.port || "").trim() || "443";
+
+        if (!host) {
+          toolsDiv.innerHTML = '<div class="message info">🔑 Enter a hostname to generate TLS commands</div>';
+        } else {
+          const cmds = [
+            `echo | openssl s_client -connect ${host}:${port} -servername ${host} 2>/dev/null | openssl x509 -noout -issuer -subject -dates`,
+            `curl -vkI https://${host}:${port}/ 2>&1 | head -n 80`
+          ].join('\n');
+
+          toolsDiv.innerHTML = `
+            <div><strong>🔒 TLS inspection commands:</strong></div>
+            <pre style="margin: 12px 0;">${escapeHtml(cmds)}</pre>
+            <button class="btn" id="copyTlsCmd">📋 Copy commands</button>
+          `;
+
+          setTimeout(() => {
+            $("copyTlsCmd")?.addEventListener("click", async () => {
+              await copyText(cmds);
+              showToast("✅ TLS commands copied!");
+            });
+          }, 0);
+        }
+      } else if (kind === "nginxfind") {
+        const target = (values.target || "").trim();
+        const hh = (values.host_header || "").trim();
+
+        if (!target) {
+          toolsDiv.innerHTML = '<div class="message info">🌐 Enter a target host/IP to generate Nginx vhost finder commands</div>';
+        } else {
+          const cmds = [
+            `sudo nginx -T | grep -n 'server_name' | head -n 120`,
+            `curl -i http://${target}/ | head -n 25`,
+            hh ? `curl -i -H 'Host: ${hh}' http://${target}/ | head -n 30` : '# Add Host header for vhost debugging'
+          ].join('\n');
+
+          toolsDiv.innerHTML = `
+            <div><strong>🔍 Nginx vhost finder commands:</strong></div>
+            <pre style="margin: 12px 0;">${escapeHtml(cmds)}</pre>
+            <button class="btn" id="copyNgFind">📋 Copy commands</button>
+          `;
+
+          setTimeout(() => {
+            $("copyNgFind")?.addEventListener("click", async () => {
+              await copyText(cmds);
+              showToast("✅ Nginx commands copied!");
+            });
+          }, 0);
+        }
+      }
+
+      elTools.appendChild(toolsDiv);
+    }
+
+    // Render gate, tools, content, KB
+    function renderGateToolsContentKB(tab) {
+      renderGate(tab);
+      renderTools(tab);
+      renderContent(tab);
+      renderKB(tab);
+    }
+
+    // Render note
+    function renderNote(tab) {
+      const elNote = $("note");
+      if (tab.note) {
+        elNote.style.display = "flex";
+        elNote.className = "message info";
+        elNote.innerHTML = `<span>💡</span> ${escapeHtml(tab.note)}`;
+      } else {
+        elNote.style.display = "none";
+      }
+    }
+
+    // Render main content
+    function renderMain() {
+      const tab = getTab(state.activeId);
+      $("pageTitle").textContent = tab.name;
+      $("pageHint").textContent = tab.hint || "";
+      
+      renderMeta(tab);
+      renderInputs(tab);
+      renderGateToolsContentKB(tab);
+      renderNote(tab);
+    }
+
+    // Render everything
+    function renderAll() {
+      renderTabs();
+      renderMain();
+      
+      $("expandPill").textContent = state.perBlockCopy ? "on" : "off";
+      $("runbookPill").textContent = state.runbook ? "on" : "off";
+    }
+
+    // Flatten commands for copy all
+    function flattenCommands(tab) {
+      const values = state.inputs[tab.id] || {};
+      const cmds = [];
+      
+      (tab.blocks || []).forEach(b => {
+        if (b.cmd) {
+          cmds.push(applyTemplate(b.cmd, values));
+        } else if (b.title && Array.isArray(b.items)) {
+          b.items.forEach(it => {
+            if (it.cmd) cmds.push(applyTemplate(it.cmd, values));
+          });
+        }
+      });
+      
+      return cmds.filter(Boolean);
+    }
+
+    // Event listeners
+    document.addEventListener("DOMContentLoaded", () => {
+      // Search
+      $("search").addEventListener("input", (e) => {
+        state.filter = e.target.value;
+        renderTabs();
+      });
+
+      // Copy all
+      $("copyAllBtn").addEventListener("click", async () => {
+        const tab = getTab(state.activeId);
+        if (!isReady(tab)) {
+          showToast("⚠️ Fill required inputs first", "warning");
+          return;
+        }
+        
+        const cmds = flattenCommands(tab).join("\n\n");
+        const success = await copyText(cmds);
+        showToast(success ? "✅ All commands copied!" : "❌ Copy failed", success ? "success" : "error");
+      });
+
+      // Per-block copy toggle
+      $("expandBtn").addEventListener("click", () => {
+        state.perBlockCopy = !state.perBlockCopy;
+        renderAll();
+      });
+
+      // Runbook toggle
+      $("runbookBtn").addEventListener("click", () => {
+        state.runbook = !state.runbook;
+        renderAll();
+      });
+
+      // Reset inputs
+      $("resetBtn").addEventListener("click", () => {
+        const tab = getTab(state.activeId);
+        state.inputs[tab.id] = {};
+        renderAll();
+        showToast("🔄 Inputs reset", "info");
+      });
+
+      // Theme toggle
+      $("themeToggle").addEventListener("click", () => {
+        state.theme = state.theme === 'dark' ? 'light' : 'dark';
+        document.body.classList.toggle('light-theme', state.theme === 'light');
+        $("themeToggle").textContent = state.theme === 'dark' ? '🌓' : '🌞';
+      });
+
+      // Initial render
+      renderAll();
+    });
+  </script>
+</body>
+</html>
